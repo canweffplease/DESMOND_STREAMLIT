@@ -13,7 +13,7 @@ def download_file_from_google_drive(file_id, dest_path):
                                         unzip=False)
 
 # Cached function to load the model
-@st.cache(allow_output_mutation=True)
+@st.cache_data()
 def load_models_and_tokenizers():
     # Your Google Drive file ids and destination paths
     model_file_id = '1GauD9-t8V8jC0aqu9iuygAk_yLz6lsX4'
@@ -33,17 +33,17 @@ def load_models_and_tokenizers():
         download_file_from_google_drive(english_tokenizer_file_id, 'tokenizers/english_tokenizer.pkl')
     if not os.path.isfile('tokenizers/french_tokenizer.pkl'):
         download_file_from_google_drive(french_tokenizer_file_id, 'tokenizers/french_tokenizer.pkl')
-
+    print(1)
     # Load models and tokenizers
     model = load_model('models/DESMOND-v0.3-GPU.h5', compile=False)
     encoder_model = load_model('models/v0.3ed/encoder_model.h5', compile=False)
     decoder_model = load_model('models/v0.3ed/decoder_model.h5', compile=False)
-
+    print(2)
     with open('tokenizers/english_tokenizer.pkl', 'rb') as file:
         english_tokenizer = pickle.load(file)
     with open('tokenizers/french_tokenizer.pkl', 'rb') as file:
         french_tokenizer = pickle.load(file)
-
+    print(3)
     return model, encoder_model, decoder_model, english_tokenizer, french_tokenizer
 
 # Use the cached function to load models and tokenizers
