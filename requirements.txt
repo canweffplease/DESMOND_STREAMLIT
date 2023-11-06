@@ -1,0 +1,6 @@
+streamlit
+numpy
+tensorflow
+h5py
+google_drive_downloader
+os
