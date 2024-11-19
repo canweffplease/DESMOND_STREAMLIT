@@ -6,13 +6,11 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from google_drive_downloader import GoogleDriveDownloader as gdd
 import os
 
-# Function to download a file from Google Drive
 def download_file_from_google_drive(file_id, dest_path):
     gdd.download_file_from_google_drive(file_id=file_id,
                                         dest_path=dest_path,
                                         unzip=False)
 
-# Cached function to load the model
 @st.cache_data()
 def load_models_and_tokenizers():
     # Your Google Drive file ids and destination paths
@@ -22,7 +20,6 @@ def load_models_and_tokenizers():
     english_tokenizer_file_id = '1GRAzVUycazeHsUH9i1Lih1mt9AHkhIau'
     french_tokenizer_file_id = '1jC9rdkL9XjH5jAu9zhdPwEiwnI8qhdlI'
 
-    # Download files if they don't exist
     if not os.path.isfile('models/DESMOND-v0.3-GPU.h5'):
         download_file_from_google_drive(model_file_id, 'models/DESMOND-v0.3-GPU.h5')
     if not os.path.isfile('models/v0.3ed/encoder_model.h5'):
@@ -34,7 +31,6 @@ def load_models_and_tokenizers():
     if not os.path.isfile('tokenizers/french_tokenizer.pkl'):
         download_file_from_google_drive(french_tokenizer_file_id, 'tokenizers/french_tokenizer.pkl')
     print(1)
-    # Load models and tokenizers
     model = load_model('models/DESMOND-v0.3-GPU.h5', compile=False)
     encoder_model = load_model('models/v0.3ed/encoder_model.h5', compile=False)
     decoder_model = load_model('models/v0.3ed/decoder_model.h5', compile=False)
@@ -46,19 +42,14 @@ def load_models_and_tokenizers():
     print(3)
     return model, encoder_model, decoder_model, english_tokenizer, french_tokenizer
 
-# Use the cached function to load models and tokenizers
 model, encoder_model, decoder_model, english_tokenizer, french_tokenizer = load_models_and_tokenizers()
 
-# Define the max sequence length
 max_english_sequence_length = 20  # Adjust as needed
 
-# Function to preprocess the input sentence
 def preprocess_input_sentence(input_sentence):
     input_seq = english_tokenizer.texts_to_sequences([input_sentence])
     input_seq = pad_sequences(input_seq, maxlen=max_english_sequence_length, padding='post')
     return input_seq
-
-# Function to decode the input sentence
 def decode_sequence_english(input_seq):
     states_value = encoder_model.predict(input_seq)
 
@@ -88,13 +79,10 @@ def decode_sequence_english(input_seq):
 
     return decoded_sentence
 
-# Set up the Streamlit interface
 st.title('English to French Translation')
 
-# Text box for user input
 input_sentence = st.text_input("Enter an English sentence:")
 
-# Button to translate the sentence
 if st.button('Translate'):
     if input_sentence:
         input_seq = preprocess_input_sentence(input_sentence)
